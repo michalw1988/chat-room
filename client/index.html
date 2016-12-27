@@ -1,0 +1,55 @@
+============================ Simple Chat Room ==========================
+<br>
+<br>
+<textarea rows="20" cols="50" readonly id="textArea"></textarea>
+<textarea rows="20" cols="20" readonly id="userList"></textarea>
+<br>
+<br>
+Nickname
+<input type="text" id="nickName" size="15">
+<button id="changeNick" onclick="sendNewNick()">Change</button>
+<br>
+Type your message and press [Enter]
+<input type="text" id="messageBox" size="59">
+
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script>
+	var socket = io();
+	
+	var textArea = document.getElementById("textArea");
+	
+	document.getElementById("messageBox").addEventListener("keydown", function(e) {
+		if (e.keyCode == '13') {
+			sendMessage();
+		}
+	});
+	
+	function sendMessage() {
+		var message = document.getElementById("messageBox").value;
+		document.getElementById("messageBox").value = '';
+		socket.emit('messageSent',{nick:document.getElementById("nickName").value, message:message});
+	}
+	
+	function sendNewNick() {
+		var newNick = document.getElementById("nickName").value;
+		socket.emit('newNick',newNick);
+	}
+	
+	socket.on('messageReceived',function(data){
+		textArea.value += data + "\n";
+		textArea.scrollTop = textArea.scrollHeight;
+	});
+	
+	socket.on('newId',function(data){
+		document.getElementById("nickName").value = "Guest_" + data;
+	});
+	
+	socket.on('userList',function(data){
+		//console.log(data);
+		document.getElementById("userList").value = '';
+		for(var i in data){
+			document.getElementById("userList").value += data[i]['nick'] + "\n";
+		}
+	});
+	
+</script>
