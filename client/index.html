@@ -1,4 +1,4 @@
-============================ Simple Chat Room ==========================
+========================== Simple Chat Room v2 ==========================
 <br>
 <br>
 <textarea rows="20" cols="50" readonly id="textArea"></textarea>
@@ -15,6 +15,9 @@ Type your message and press [Enter]
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script>
 	var socket = io();
+	window.onbeforeunload = function() {
+		socket.disconnect(); 
+	}
 	
 	var textArea = document.getElementById("textArea");
 	
